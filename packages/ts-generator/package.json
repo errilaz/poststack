@@ -1,0 +1,22 @@
+{
+  "name": "@poststack/ts-generator",
+  "version": "0.0.1",
+  "description": "PostStack TS Generator Library",
+  "license": "MIT",
+  "author": {
+    "name": "errilaz",
+    "url": "http://github.com/errilaz"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/errilaz/poststack.git"
+  },
+  "main": "lib/ts.js",
+  "scripts": {
+    "build": "tsc --project .",
+    "clean": "rm -rf lib"
+  },
+  "devDependencies": {
+    "@poststack/metadata": "workspace:*"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "name": "@poststack/metadata",
+  "version": "0.0.1",
+  "description": "PostStack Metadata Library",
+  "license": "MIT",
+  "author": {
+    "name": "errilaz",
+    "url": "http://github.com/errilaz"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/errilaz/poststack.git"
+  },
+  "main": "lib/metadata.js",
+  "types": "lib/metadata.d.ts",
+  "scripts": {
+    "build": "tsc --project .",
+    "clean": "rm -rf lib"
+  }
+}

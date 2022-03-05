@@ -1,0 +1,22 @@
+{
+  "name": "@poststack/web-transport",
+  "version": "0.0.1",
+  "description": "PostStack Web Transport",
+  "license": "MIT",
+  "author": {
+    "name": "errilaz",
+    "url": "http://github.com/errilaz"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/errilaz/poststack.git"
+  },
+  "main": "lib/web.js",
+  "scripts": {
+    "build": "tsc --project .",
+    "clean": "rm -rf lib"
+  },
+  "devDependencies": {
+    "@poststack/metadata": "workspace:*"
+  }
+}

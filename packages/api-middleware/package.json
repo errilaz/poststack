@@ -1,0 +1,23 @@
+{
+  "name": "@poststack/api-middleware",
+  "version": "0.0.1",
+  "description": "PostStack API Middleware",
+  "license": "MIT",
+  "author": {
+    "name": "errilaz",
+    "url": "http://github.com/errilaz"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/errilaz/poststack.git"
+  },
+  "main": "lib/middleware.js",
+  "scripts": {
+    "build": "tsc --project .",
+    "clean": "rm -rf lib"
+  },
+  "devDependencies": {
+    "@poststack/metadata": "workspace:*",
+    "@types/koa": "^2.13.4"
+  }
+}
