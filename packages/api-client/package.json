@@ -16,6 +16,9 @@
     "build": "tsc --project .",
     "clean": "rm -rf lib"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "devDependencies": {
     "@poststack/metadata": "workspace:*"
   }
