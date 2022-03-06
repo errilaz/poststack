@@ -1,7 +1,7 @@
 {
-  "name": "@poststack/cli",
+  "name": "@poststack/db-inspector",
   "version": "0.0.1",
-  "description": "PostStack CLI",
+  "description": "PostStack DB Inspector",
   "license": "MIT",
   "author": {
     "name": "errilaz",
@@ -11,7 +11,7 @@
     "type": "git",
     "url": "https://github.com/errilaz/poststack.git"
   },
-  "main": "lib/cli.js",
+  "main": "lib/inspector.js",
   "scripts": {
     "build": "tsc --project .",
     "clean": "rm -rf lib"
@@ -19,13 +19,9 @@
   "publishConfig": {
     "access": "public"
   },
-  "dependencies": {
-    "@poststack/options": "workspace:*",
-    "@poststack/db-inspector": "workspace:*",
-    "@poststack/ts-generator": "workspace:*"
-  },
   "devDependencies": {
-    "@types/node": "^17.0.21",
-    "@poststack/metadata": "workspace:*"
+    "pg-promise": "^10.11.1",
+    "@poststack/metadata": "workspace:*",
+    "@types/node": "^17.0.21"
   }
 }

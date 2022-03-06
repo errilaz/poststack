@@ -1,3 +1,8 @@
+/** 
+ * Creates a strongly typed CLI parser function.
+ ** Only parses. Does not coerce, validate, or throw.
+ ** Reports unrecognized options.
+*/
 function options<OptionsDefinition extends OptionsDefinitionBase>(definition: OptionsDefinition) {
   let rawOption: null | string = null
   let argsOption: null | string = null
@@ -6,7 +11,7 @@ function options<OptionsDefinition extends OptionsDefinitionBase>(definition: Op
   const defaultConfig = {} as any
   for (const name in definition) {
     const option = definition[name]
-    defaultConfig[name] = clone(option.actualType)
+    defaultConfig[name] = cloneValue(option.defaultValue)
     if (option.type === "raw") {
       rawOption = name
     }
@@ -21,7 +26,11 @@ function options<OptionsDefinition extends OptionsDefinitionBase>(definition: Op
     }
   }
   return (argv: string[]) => {
-    const config = { ...defaultConfig, unrecognized: [] }
+    const config = cloneRecord(defaultConfig)
+    config.unrecognized = {
+      named: [],
+      positional: []
+    }
     let remainingArgs = args.slice()
     for (let a = 0; a < argv.length; a++) {
       const arg = argv[a]
@@ -34,13 +43,13 @@ function options<OptionsDefinition extends OptionsDefinitionBase>(definition: Op
         const alias = arg[1]
         const isAlias = alias !== "-"
         if (isAlias && !aliases[alias]) {
-          config.unrecognized.push(alias)
+          config.unrecognized.named.push(alias)
           continue
         }
-        const name = isAlias ? aliases[alias]! : kebabToCamel(arg.substring(2))
+        const name = isAlias ? aliases[alias]! : dashedToCamel(arg.substring(2))
         const option = definition[name]
         if (!option) {
-          config.unrecognized.push(name)
+          config.unrecognized.named.push(name)
           continue
         }
         if (option.type === "bit") {
@@ -70,12 +79,12 @@ function options<OptionsDefinition extends OptionsDefinitionBase>(definition: Op
         for (const letter of letters) {
           const name = aliases[letter]
           if (!name) {
-            config.unrecognized.push(letter)
+            config.unrecognized.named.push(letter)
             continue
           }
           const option = definition[name]
           if (!option) {
-            config.unrecognized.push(name)
+            config.unrecognized.named.push(name)
             continue
           }
           if (option.type === "bit") {
@@ -95,6 +104,9 @@ function options<OptionsDefinition extends OptionsDefinitionBase>(definition: Op
         else if (argsOption !== null) {
           config[argsOption].push(arg)
         }
+        else {
+          config.unrecognized.positional.push(arg)
+        }
       }
     }
     return config as unknown as Options<OptionsDefinition>
@@ -106,45 +118,48 @@ export type OptionsDefinitionBase = {
 }
 
 export type Options<OptionsDefinition extends OptionsDefinitionBase> = {
-  [O in keyof OptionsDefinition]: OptionsDefinition[O]["actualType"]
+  [O in keyof OptionsDefinition]: OptionsDefinition[O]["defaultValue"]
 } & {
-  unrecognized: string[]
+  unrecognized: {
+    named: string[]
+    positional: string[]
+  }
 }
 
 module options {
   /** Positional string argument. */
   export function arg(index: number): ArgOption {
-    return { type: "arg", index, actualType: null }
+    return { type: "arg", index, defaultValue: null }
   }
 
   /** All position string arguments. */
   export function args(): ArgsOption {
-    return { type: "args", actualType: [] }
+    return { type: "args", defaultValue: [] }
   }
 
-  /** Parameterless boolean option. */
+  /** Named boolean option, no parameters. */
   export function bit(alias?: string): BitOption {
-    return { type: "bit", alias, actualType: false }
+    return { type: "bit", alias, defaultValue: false }
   }
 
   /** Named string option. */
   export function flag(alias?: string): FlagOption {
-    return { type: "flag", alias, actualType: null }
+    return { type: "flag", alias, defaultValue: null }
   }
 
   /** Named list option */
   export function list(alias?: string): ListOption {
-    return { type: "list", alias, actualType: [] }
+    return { type: "list", alias, defaultValue: [] }
   }
 
   /** Repeatable named number level. */
   export function level(alias?: string): LevelOption {
-    return { type: "level", alias, actualType: 0 }
+    return { type: "level", alias, defaultValue: 0 }
   }
 
   /** Everything after the --. */
   export function raw(): RawOption {
-    return { type: "raw", actualType: null }
+    return { type: "raw", defaultValue: null }
   }
 }
 
@@ -162,48 +177,59 @@ export type Option =
 export interface ArgOption {
   type: "arg"
   index: number
-  actualType: string | null
+  defaultValue: string | null
 }
 
 export interface ArgsOption {
   type: "args"
-  actualType: string[]
+  defaultValue: string[]
 }
 
 export interface BitOption {
   type: "bit"
   alias?: string
-  actualType: boolean
+  defaultValue: boolean
 }
 
 export interface FlagOption {
   type: "flag"
   alias?: string
-  actualType: string | null
+  defaultValue: string | null
 }
 
 export interface ListOption {
   type: "list"
   alias?: string
-  actualType: string[]
+  defaultValue: string[]
 }
 
 export interface LevelOption {
   type: "level"
   alias?: string
-  actualType: number
+  defaultValue: number
 }
 
 export interface RawOption {
   type: "raw"
-  actualType: string | null
+  defaultValue: string | null
 }
 
-function kebabToCamel(kebab: string) {
-  return kebab.replace(/-[a-z]/g, ([, c]) => c.toUpperCase());
+/** Converts dashed-case to camelCase. */
+function dashedToCamel(dashed: string) {
+  return dashed.replace(/-[a-z]/g, ([, c]) => c.toUpperCase())
 }
 
-function clone(x: any) {
+/** Clone simple values and arrays. */
+function cloneValue(x: any) {
   if (Array.isArray(x)) return x.slice()
   return x
+}
+
+/** Clone a record one-deep. */
+function cloneRecord(record: any): any {
+  const clone = {} as any
+  for (const key in record) {
+    clone[key] = cloneValue(record[key])
+  }
+  return clone
 }
