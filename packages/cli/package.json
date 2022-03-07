@@ -11,7 +11,9 @@
     "type": "git",
     "url": "https://github.com/errilaz/poststack.git"
   },
-  "main": "lib/cli.js",
+  "bin": {
+    "poststack": "./lib/cli.js"
+  },
   "scripts": {
     "build": "tsc --project .",
     "clean": "rm -rf lib"
@@ -20,12 +22,13 @@
     "access": "public"
   },
   "dependencies": {
-    "@poststack/options": "workspace:*",
     "@poststack/db-inspector": "workspace:*",
-    "@poststack/ts-generator": "workspace:*"
+    "@poststack/options": "workspace:*",
+    "@poststack/ts-generator": "workspace:*",
+    "pg-promise": "^10.11.1"
   },
   "devDependencies": {
-    "@types/node": "^17.0.21",
-    "@poststack/metadata": "workspace:*"
+    "@poststack/metadata": "workspace:*",
+    "@types/node": "^17.0.21"
   }
 }

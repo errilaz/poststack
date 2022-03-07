@@ -1,7 +1,7 @@
 import type { ApiTransport, CallCommand, DeleteCommand, InsertCommand, SelectQuery, UpdateCommand } from "@poststack/metadata"
 
 /** Passes queries to apiHandler over HTTP+JSON. */
-export default class WebTransport implements ApiTransport {
+export class WebTransport implements ApiTransport {
   private baseUrl: string
 
   constructor(baseUrl: string) {

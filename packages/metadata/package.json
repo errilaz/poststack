@@ -11,8 +11,7 @@
     "type": "git",
     "url": "https://github.com/errilaz/poststack.git"
   },
-  "main": "lib/metadata.js",  
-  "types": "lib/metadata.d.ts",
+  "main": "src/metadata.ts",
   "publishConfig": {
     "access": "public"
   },

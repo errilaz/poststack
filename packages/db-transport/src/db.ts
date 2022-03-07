@@ -2,9 +2,9 @@ import type * as pg from "pg-promise"
 import { ApiTransport, CallCommand, DeleteCommand, InsertCommand, SelectQuery, UpdateCommand } from "@poststack/metadata";
 import SqlGenerator from "@poststack/sql-generator";
 
-type Database = pg.IConnected<{}, any>;
+type Database<T = any> = pg.IBaseProtocol<T>;
 
-export default class DbTransport implements ApiTransport {
+export class DbTransport implements ApiTransport {
   private db: Database
   private sql: SqlGenerator
 

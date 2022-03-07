@@ -47,12 +47,12 @@ export default async function inspect(db: Database, settings: Partial<InspectOpt
 }
 
 
-interface UdtOptions {
+export interface UdtOptions {
   string: string[]
   number: string[]
 }
 
-interface InspectOptions {
+export interface InspectOptions {
   verbose: boolean
   // TODO: make inspector smart enough to not need this
   udts: UdtOptions

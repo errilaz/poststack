@@ -11,13 +11,16 @@
     "type": "git",
     "url": "https://github.com/errilaz/poststack.git"
   },
-  "main": "lib/poststack.js",
+  "main": "src/poststack.ts",
   "scripts": {
     "build": "tsc --project .",
     "clean": "rm -rf lib"
   },
   "dependencies": {
     "@poststack/metadata": "workspace:*",
-    "@poststack/api-client": "workspace:*"
+    "@poststack/api-client": "workspace:*",
+    "@poststack/api-middleware": "workspace:*",
+    "@poststack/db-transport": "workspace:*",
+    "@poststack/web-transport": "workspace:*"
   }
 }

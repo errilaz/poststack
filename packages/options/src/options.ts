@@ -4,10 +4,11 @@
  ** Reports unrecognized options.
 */
 function options<OptionsDefinition extends OptionsDefinitionBase>(definition: OptionsDefinition) {
+  // TODO: level max
   let rawOption: null | string = null
   let argsOption: null | string = null
-  let args: string[] = []
-  let aliases: { [alias: string]: string | undefined } = {}
+  const args: string[] = []
+  const lookupAlias: { [alias: string]: string | undefined } = {}
   const defaultConfig = {} as any
   for (const name in definition) {
     const option = definition[name]
@@ -22,10 +23,13 @@ function options<OptionsDefinition extends OptionsDefinitionBase>(definition: Op
       args[option.index] = name
     }
     else if (option.alias) {
-      aliases[option.alias] = name
+      lookupAlias[option.alias] = name
     }
   }
-  return (argv: string[]) => {
+  parse.generateHelp = generateHelp
+  return parse
+
+  function parse(argv: string[]) {
     const config = cloneRecord(defaultConfig)
     config.unrecognized = {
       named: [],
@@ -42,11 +46,11 @@ function options<OptionsDefinition extends OptionsDefinitionBase>(definition: Op
       else if (arg.startsWith("--") || (arg[0] === "-" && arg.length === 2)) {
         const alias = arg[1]
         const isAlias = alias !== "-"
-        if (isAlias && !aliases[alias]) {
+        if (isAlias && !lookupAlias[alias]) {
           config.unrecognized.named.push(alias)
           continue
         }
-        const name = isAlias ? aliases[alias]! : dashedToCamel(arg.substring(2))
+        const name = isAlias ? lookupAlias[alias]! : dashedToCamel(arg.substring(2))
         const option = definition[name]
         if (!option) {
           config.unrecognized.named.push(name)
@@ -77,7 +81,7 @@ function options<OptionsDefinition extends OptionsDefinitionBase>(definition: Op
       else if (arg.startsWith("-") && arg.length > 2) {
         const letters = arg.substring(1).split("");
         for (const letter of letters) {
-          const name = aliases[letter]
+          const name = lookupAlias[letter]
           if (!name) {
             config.unrecognized.named.push(letter)
             continue
@@ -111,6 +115,10 @@ function options<OptionsDefinition extends OptionsDefinitionBase>(definition: Op
     }
     return config as unknown as Options<OptionsDefinition>
   }
+
+  function generateHelp(prefix: string) {
+    return "Usage: " + prefix + " " + JSON.stringify(definition, null, 2)
+  }
 }
 
 export type OptionsDefinitionBase = {
@@ -126,40 +134,42 @@ export type Options<OptionsDefinition extends OptionsDefinitionBase> = {
   }
 }
 
+export type Help = string | ([string] | [string, string])[]
+
 module options {
   /** Positional string argument. */
-  export function arg(index: number): ArgOption {
-    return { type: "arg", index, defaultValue: null }
+  export function arg(index: number, help?: Help): ArgOption {
+    return { type: "arg", index, help, defaultValue: null }
   }
 
   /** All position string arguments. */
-  export function args(): ArgsOption {
-    return { type: "args", defaultValue: [] }
+  export function args(help?: Help): ArgsOption {
+    return { type: "args", help, defaultValue: [] }
   }
 
   /** Named boolean option, no parameters. */
-  export function bit(alias?: string): BitOption {
-    return { type: "bit", alias, defaultValue: false }
+  export function bit(alias?: string, help?: Help): BitOption {
+    return { type: "bit", alias, help, defaultValue: false }
   }
 
   /** Named string option. */
-  export function flag(alias?: string): FlagOption {
-    return { type: "flag", alias, defaultValue: null }
+  export function flag(alias?: string, help?: Help, defaultValue?: string): FlagOption {
+    return { type: "flag", alias, help, defaultValue: defaultValue === undefined ? null : defaultValue }
   }
 
   /** Named list option */
-  export function list(alias?: string): ListOption {
-    return { type: "list", alias, defaultValue: [] }
+  export function list(alias?: string, help?: Help): ListOption {
+    return { type: "list", alias, help, defaultValue: [] }
   }
 
   /** Repeatable named number level. */
-  export function level(alias?: string): LevelOption {
-    return { type: "level", alias, defaultValue: 0 }
+  export function level(alias?: string, help?: Help): LevelOption {
+    return { type: "level", alias, help, defaultValue: 0 }
   }
 
   /** Everything after the --. */
-  export function raw(): RawOption {
-    return { type: "raw", defaultValue: null }
+  export function raw(help?: Help): RawOption {
+    return { type: "raw", help, defaultValue: null }
   }
 }
 
@@ -177,40 +187,47 @@ export type Option =
 export interface ArgOption {
   type: "arg"
   index: number
+  help?: Help
   defaultValue: string | null
 }
 
 export interface ArgsOption {
   type: "args"
+  help?: Help
   defaultValue: string[]
 }
 
 export interface BitOption {
   type: "bit"
   alias?: string
+  help?: Help
   defaultValue: boolean
 }
 
 export interface FlagOption {
   type: "flag"
   alias?: string
+  help?: Help
   defaultValue: string | null
 }
 
 export interface ListOption {
   type: "list"
   alias?: string
+  help?: Help
   defaultValue: string[]
 }
 
 export interface LevelOption {
   type: "level"
   alias?: string
+  help?: Help
   defaultValue: number
 }
 
 export interface RawOption {
   type: "raw"
+  help?: Help
   defaultValue: string | null
 }
 

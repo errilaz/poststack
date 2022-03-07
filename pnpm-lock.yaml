@@ -23,10 +23,12 @@ importers:
       '@poststack/options': workspace:*
       '@poststack/ts-generator': workspace:*
       '@types/node': ^17.0.21
+      pg-promise: ^10.11.1
     dependencies:
       '@poststack/db-inspector': link:../db-inspector
       '@poststack/options': link:../options
       '@poststack/ts-generator': link:../ts-generator
+      pg-promise: 10.11.1
     devDependencies:
       '@poststack/metadata': link:../metadata
       '@types/node': 17.0.21
@@ -36,11 +38,10 @@ importers:
       '@poststack/metadata': workspace:*
       '@types/node': ^17.0.21
       pg-promise: ^10.11.1
-    dependencies:
-      pg-promise: 10.11.1
     devDependencies:
       '@poststack/metadata': link:../metadata
       '@types/node': 17.0.21
+      pg-promise: 10.11.1
 
   packages/db-transport:
     specifiers:
@@ -61,10 +62,16 @@ importers:
   packages/poststack:
     specifiers:
       '@poststack/api-client': workspace:*
+      '@poststack/api-middleware': workspace:*
+      '@poststack/db-transport': workspace:*
       '@poststack/metadata': workspace:*
+      '@poststack/web-transport': workspace:*
     dependencies:
       '@poststack/api-client': link:../api-client
+      '@poststack/api-middleware': link:../api-middleware
+      '@poststack/db-transport': link:../db-transport
       '@poststack/metadata': link:../metadata
+      '@poststack/web-transport': link:../web-transport
 
   packages/sql-generator:
     specifiers:

@@ -3,7 +3,6 @@
   "version": "0.0.1",
   "description": "PostStack Option Parser",
   "license": "MIT",
-  "type": "module",
   "author": {
     "name": "errilaz",
     "url": "http://github.com/errilaz"
@@ -12,7 +11,7 @@
     "type": "git",
     "url": "https://github.com/errilaz/poststack.git"
   },
-  "main": "lib/options.js",
+  "main": "src/options.ts",
   "scripts": {
     "build": "tsc --project .",
     "clean": "rm -rf lib"

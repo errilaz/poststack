@@ -35,8 +35,6 @@ export module ApiClient {
   }
 }
 
-export default ApiClient;
-
 /* Table functions. */
 export interface TableApi<Table> {
   select(all: "*"): Select<Table, Table>;
