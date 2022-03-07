@@ -11,7 +11,7 @@
     "type": "git",
     "url": "https://github.com/errilaz/poststack.git"
   },
-  "main": "src/db.ts",
+  "main": "src/dbTransport.ts",
   "scripts": {
     "build": "tsc --project .",
     "clean": "rm -rf lib"
